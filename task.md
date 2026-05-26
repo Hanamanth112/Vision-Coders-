@@ -1,0 +1,31 @@
+# Migration Checklist
+
+- [x] **Phase 1: Backend Infrastructure & Database**
+  - [x] Update `backend/requirements.txt` with FastAPI, Uvicorn, Motor, Pymongo, PyJWT, and bcrypt
+  - [x] Implement `backend/database.py` with MongoDB connection client and stateful In-Memory Mock DB fallback
+  - [x] Adapt `backend/model.py` to ensure it continues loading Scikit-Learn RandomForest models correctly
+  - [x] Rewrite `backend/seed.py` to populate MongoDB/Mock DB with initial user and transaction logs
+- [x] **Phase 2: FastAPI Routing & API Setup**
+  - [x] Implement JWT Auth Helpers & security dependencies (`get_current_user`)
+  - [x] Rewrite Registration, Login, and User Profile endpoints
+  - [x] Migrate Transactions GET/POST/DELETE endpoints (with transaction velocity calculations)
+  - [x] Migrate Dashboard Stats, Charts, and Insights endpoints
+  - [x] Migrate Fraud Alerts & Resolutions endpoints
+  - [x] Migrate Savings Goals (GET/POST/DELETE) and Add Money endpoints
+- [x] **Phase 3: React Frontend Setup**
+  - [x] Initialize React + TS project using Vite in `frontend/`
+  - [x] Add packages: lucide-react, chart.js, react-chartjs-2, dayjs, etc.
+  - [x] Configure Vite proxy/port to communicate with FastAPI on port 5000
+  - [x] Set up global CSS styling using the existing glassmorphic style sheets
+- [x] **Phase 4: React Components Development**
+  - [x] Build Auth pages (Login, Register, OTP forms, Mock SMS warnings)
+  - [x] Build Main Layout & Sidebar (Navigation, Theme/Currency select, Profile initials)
+  - [x] Build Metrics & Charts (Total Balance, Budget progress, Doughnut and Cashflow charts)
+  - [x] Build Transactions view ( ledger tables, query filters, search bar, CSV exporter)
+  - [x] Build Fraud Center view (pending fraud alerts, archived history, sandbox simulators, feature weights, SOS toggle)
+  - [x] Build Settings view (limits configuration, goal creator)
+  - [x] Build Modals & Overlays (Add Transaction, Add Money, SOS Siren overlay)
+- [x] **Phase 5: Verification & Walkthrough**
+  - [x] Run backend unit tests (`backend/test_api.py`)
+  - [x] Run build validation on Vite/React frontend
+  - [x] Create walkthrough.md with instructions to execute and verify the application
