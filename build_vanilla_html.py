@@ -1,0 +1,862 @@
+import os
+
+react_index_path = r"c:\Users\sande\OneDrive\Documents\Fintech\frontend\index.html"
+backup_path = r"c:\Users\sande\OneDrive\Documents\Fintech\frontend\index_react.html"
+vanilla_index_path = r"c:\Users\sande\OneDrive\Documents\Fintech\frontend\index.html"
+
+# Backup React index.html if it exists and hasn't been backed up yet
+if os.path.exists(react_index_path) and not os.path.exists(backup_path):
+    with open(react_index_path, 'r', encoding='utf-8') as f:
+        content = f.read()
+    if "/src/main.tsx" in content: # Verify it is indeed the React Vite one
+        with open(backup_path, 'w', encoding='utf-8') as f:
+            f.write(content)
+        print("Backed up React index.html to index_react.html")
+
+vanilla_html_content = """<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="SmartFin AI - AI-driven personal finance manager, budget planner, and automated real-time transaction fraud detection dashboard.">
+    <title>SmartFin AI - AI-Powered Personal Finance & Fraud Detection Dashboard</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome & Lucide Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- DayJS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
+    <!-- PapaParse CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <!-- CSS Stylesheet -->
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body class="dark-theme">
+    <!-- Background Ambient Glows -->
+    <div class="ambient-glow glow-1"></div>
+    <div class="ambient-glow glow-2"></div>
+    <div class="ambient-glow glow-3"></div>
+
+    <!-- ==================== FULLSCREEN OVERLAY: SOS SIREN FLASH ==================== -->
+    <div id="sos-alert-flash-screen" class="hidden">
+        <div class="sos-flash-overlay">
+            <div class="sos-alarm-container">
+                <i class="fa-solid fa-triangle-exclamation animate-pulse-fast text-red large-icon"></i>
+                <h1 class="font-accent text-red animate-pulse-fast">SOS THREAT ALARM TRIGGERED</h1>
+                <p>High-risk anomalous transaction detected. Dual-tone siren audio and device hardware vibration warning sequence active.</p>
+                <div class="sos-buttons">
+                    <button id="btn-sos-dismiss" class="btn btn-primary" style="background: var(--color-red); border-color: var(--color-red);">
+                        <i class="fa-solid fa-volume-xmark"></i> Dismiss Siren Alarm
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== TOAST NOTIFICATIONS CONTAINER ==================== -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- ==================== AUTHENTICATION VIEWS ==================== -->
+    <div id="auth-container" class="auth-container">
+        <div class="auth-brand">
+            <div class="brand-logo-large logo-glow">
+                <i class="fa-solid fa-shield-halved text-accent"></i>
+            </div>
+            <h1 class="brand-title-large font-accent">SmartFin <span class="text-accent">AI</span></h1>
+            <p class="brand-subtitle-large">Secure AI-Driven Personal Finance Manager & Fraud Detection Hub</p>
+        </div>
+
+        <div class="auth-card-wrapper">
+            <!-- 1. Login Card -->
+            <div id="login-card" class="auth-card glass-panel shadow-glow">
+                <h2 class="auth-title font-accent">Secure Login</h2>
+                <p class="auth-subtitle">Verify your identity to load the AI finance engine</p>
+                <form id="login-form" class="modal-form">
+                    <div class="form-group">
+                        <label for="login-email">Registered Email</label>
+                        <div class="input-wrapper">
+                            <i class="fa-regular fa-envelope"></i>
+                            <input type="email" id="login-email" placeholder="you@example.com" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="login-password">Password</label>
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-lock"></i>
+                            <input type="password" id="login-password" placeholder="••••••••" required>
+                        </div>
+                    </div>
+                    <button type="submit" id="btn-login-submit" class="btn btn-accent btn-block">
+                        <span>Secure Log In</span> <i class="fa-solid fa-right-to-bracket"></i>
+                    </button>
+                </form>
+                <div class="auth-footer">
+                    <p>New to SmartFin AI? <button id="toggle-to-signup" class="btn-link">Initialize Account</button></p>
+                </div>
+            </div>
+
+            <!-- 2. Signup Card -->
+            <div id="signup-card" class="auth-card glass-panel shadow-glow hidden">
+                <h2 class="auth-title font-accent">Initialize Account</h2>
+                <p class="auth-subtitle">Create a secure financial container and local home node</p>
+                <form id="signup-form" class="modal-form">
+                    <div class="form-group">
+                        <label for="signup-name">Full Name</label>
+                        <div class="input-wrapper">
+                            <i class="fa-regular fa-user"></i>
+                            <input type="text" id="signup-name" placeholder="John Doe" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-email">Email Address</label>
+                        <div class="input-wrapper">
+                            <i class="fa-regular fa-envelope"></i>
+                            <input type="email" id="signup-email" placeholder="john@example.com" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-password">Security Password</label>
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-lock"></i>
+                            <input type="password" id="signup-password" placeholder="••••••••" minlength="6" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label for="signup-budget">Monthly Budget (₹)</label>
+                                <div class="input-wrapper">
+                                    <i class="fa-solid fa-indian-rupee-sign"></i>
+                                    <input type="number" id="signup-budget" value="50000" min="1000" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label for="signup-location">Home Location</label>
+                                <div class="input-wrapper">
+                                    <i class="fa-solid fa-house-chimney"></i>
+                                    <input type="text" id="signup-location" value="New York, USA" placeholder="e.g. New York, USA" required>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="submit" id="btn-signup-submit" class="btn btn-accent btn-block">
+                        <span>Initialize Engine</span> <i class="fa-solid fa-bolt"></i>
+                    </button>
+                </form>
+                <div class="auth-footer">
+                    <p>Already registered? <button id="toggle-to-login" class="btn-link">Secure Log In</button></p>
+                </div>
+            </div>
+
+            <!-- 3. OTP 2FA Verification Card -->
+            <div id="otp-card" class="auth-card glass-panel shadow-glow hidden">
+                <h2 class="auth-title font-accent"><i class="fa-solid fa-shield-keyhole text-accent"></i> 2FA Verification</h2>
+                <p class="auth-subtitle">A verification code has been dispatched to your primary device</p>
+                <form id="otp-form" class="modal-form">
+                    <div class="form-group">
+                        <label for="otp-input">Enter OTP Code</label>
+                        <div class="input-wrapper" style="margin-bottom: 20px;">
+                            <i class="fa-solid fa-key"></i>
+                            <input type="text" id="otp-input" placeholder="Enter 6-digit code" required style="letter-spacing: 4px; text-align: center; font-size: 1.2rem;">
+                        </div>
+                    </div>
+                    <div class="otp-buttons" style="display:flex; flex-direction:column; gap:10px;">
+                        <button type="submit" id="btn-otp-submit" class="btn btn-accent btn-block">
+                            Verify security code <i class="fa-solid fa-circle-check"></i>
+                        </button>
+                        <button id="btn-otp-resend-safe" type="button" class="btn btn-outline btn-block text-cyan" style="border-color: var(--color-cyan);">
+                            <i class="fa-solid fa-location-crosshairs animate-pulse-fast"></i> Resend Safe OTP (Home Node)
+                        </button>
+                        <button id="btn-otp-report-fraud" type="button" class="btn btn-outline btn-block text-danger" style="border-color: var(--color-red);">
+                            <i class="fa-solid fa-triangle-exclamation text-red animate-pulse-fast"></i> Report Phishing Hack (Block IP)
+                        </button>
+                        <button id="btn-otp-cancel" type="button" class="btn btn-link btn-block text-center">Cancel Session</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Mock SMS Phone Alert Container -->
+            <div id="mock-sms-notification" class="sms-toast hidden">
+                <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
+                    <i class="fa-solid fa-comment-sms text-cyan" style="font-size:1.2rem;"></i>
+                    <strong style="color:var(--color-slate-100)">Local SIM Network simulator</strong>
+                </div>
+                <p id="sms-text" style="font-size:0.85rem; margin:0; line-height:1.4; color:var(--color-slate-300);">
+                    Your SmartFin security code is <strong>582194</strong>.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== MAIN DASHBOARD LAYOUT ==================== -->
+    <div id="app-layout" class="app-layout hidden">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-icon"><i class="fa-solid fa-shield-halved text-accent"></i></div>
+                <div class="logo-text font-accent">SmartFin <span class="text-accent">AI</span></div>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <ul>
+                    <li id="nav-dashboard" class="nav-item active">
+                        <i class="fa-solid fa-chart-pie"></i>
+                        <span>Dashboard Overview</span>
+                    </li>
+                    <li id="nav-transactions" class="nav-item">
+                        <i class="fa-solid fa-table-list"></i>
+                        <span>Ledger History</span>
+                    </li>
+                    <li id="nav-fraud" class="nav-item" style="position:relative;">
+                        <i class="fa-solid fa-shield-virus"></i>
+                        <span>Fraud Center</span>
+                        <span id="badge-fraud-count" class="badge-alert hidden">0</span>
+                    </li>
+                    <li id="nav-settings" class="nav-item">
+                        <i class="fa-solid fa-gears"></i>
+                        <span>Settings & Goals</span>
+                    </li>
+                </ul>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="user-profile-summary">
+                    <div class="avatar-glow">
+                        <div id="user-avatar-initials">JD</div>
+                    </div>
+                    <div class="user-profile-info">
+                        <div id="user-display-name" class="profile-name">John Doe</div>
+                        <div id="user-display-location" class="profile-location">New York, USA</div>
+                    </div>
+                </div>
+                <button id="btn-logout" class="btn-logout" aria-label="Sign Out">
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i> <span>Sign Out</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Body Content -->
+        <div class="main-body">
+            <!-- Header bar -->
+            <header class="main-header">
+                <h2 id="view-title" class="font-accent">Dashboard Overview</h2>
+                <div class="header-actions">
+                    <div class="date-badge">
+                        <i class="fa-regular fa-calendar"></i>
+                        <span id="current-date-text">Monday, May 25, 2026</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Dashboard View -->
+            <main id="view-dashboard" class="view-panel">
+                <!-- Metrics Grid -->
+                <div class="metrics-grid">
+                    <div class="metric-card card-glow-cyan">
+                        <div class="card-inner">
+                            <div class="metric-info">
+                                <span class="metric-label">Net Balance</span>
+                                <h3 id="stat-total-balance" class="metric-value">₹0.00</h3>
+                            </div>
+                            <div class="metric-icon icon-cyan"><i class="fa-solid fa-wallet"></i></div>
+                        </div>
+                    </div>
+                    <div class="metric-card card-glow-green">
+                        <div class="card-inner">
+                            <div class="metric-info">
+                                <span class="metric-label">Monthly Inflow</span>
+                                <h3 id="stat-monthly-income" class="metric-value">₹0.00</h3>
+                            </div>
+                            <div class="metric-icon icon-green"><i class="fa-solid fa-circle-arrow-down"></i></div>
+                        </div>
+                    </div>
+                    <div class="metric-card card-glow-violet">
+                        <div class="card-inner">
+                            <div class="metric-info">
+                                <span class="metric-label">Monthly Outflow</span>
+                                <h3 id="stat-monthly-expense" class="metric-value">₹0.00</h3>
+                            </div>
+                            <div class="metric-icon icon-violet"><i class="fa-solid fa-circle-arrow-up"></i></div>
+                        </div>
+                    </div>
+                    <div class="metric-card card-glow-amber">
+                        <div class="card-inner">
+                            <div class="metric-info">
+                                <span class="metric-label">Net Monthly Savings</span>
+                                <h3 id="stat-monthly-savings" class="metric-value">₹0.00</h3>
+                            </div>
+                            <div class="metric-icon icon-amber"><i class="fa-solid fa-piggy-bank"></i></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Limits Tracking Grid -->
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px; margin-bottom:20px;">
+                    <!-- Budget Outflows Tracker Card -->
+                    <div class="glass-panel" style="padding: 20px;">
+                        <h4 class="card-title"><i class="fa-solid fa-chart-line text-accent"></i> Monthly Outflow Tracker</h4>
+                        <p class="text-muted text-sm" style="margin-bottom:15px;">Real-time progress of expenses against your global budget limit.</p>
+                        <div class="progress-bar-container">
+                            <div id="progress-budget-usage" class="progress-bar-fill fill-violet" style="width: 0%;"></div>
+                        </div>
+                        <div class="progress-labels">
+                            <span id="lbl-budget-pct" class="lbl-pct">0%</span>
+                            <span id="lbl-budget-limit" class="lbl-limit">Limit: ₹0.00</span>
+                        </div>
+                    </div>
+
+                    <!-- Savings Tracker Card -->
+                    <div class="glass-panel" style="padding: 20px;">
+                        <h4 class="card-title"><i class="fa-solid fa-bullseye text-accent"></i> Savings Target Progress</h4>
+                        <p class="text-muted text-sm" style="margin-bottom:15px;">Calculated tracking of monthly savings compared to your target goal.</p>
+                        <div class="progress-bar-container">
+                            <div id="progress-savings-goal" class="progress-bar-fill fill-amber" style="width: 0%;"></div>
+                        </div>
+                        <div class="progress-labels">
+                            <span id="lbl-savings-pct" class="lbl-pct">0%</span>
+                            <span id="lbl-savings-limit" class="lbl-limit">Goal: ₹0.00</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts Grid -->
+                <div class="charts-grid">
+                    <div class="glass-panel chart-card" style="position:relative;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                            <h4 class="card-title">Outflow & Cashflow Trend (Last 30 Days)</h4>
+                            <div style="font-size:0.8rem; background:rgba(6, 182, 212, 0.1); padding: 4px 8px; border-radius:12px; border:1px solid rgba(6, 182, 212, 0.2);">
+                                <i class="fa-solid fa-crystal-ball text-cyan"></i> AI Predicted Spend: <strong id="forecast-spend-value" class="text-cyan">₹0.00</strong>
+                            </div>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="chart-cashflow"></canvas>
+                        </div>
+                    </div>
+                    <div class="glass-panel chart-card">
+                        <h4 class="card-title" style="margin-bottom:15px;">Outflow Category Distribution</h4>
+                        <div class="chart-container">
+                            <canvas id="chart-categories"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Details/insights Grid -->
+                <div class="details-grid">
+                    <!-- Recent Ledger -->
+                    <div class="glass-panel details-panel">
+                        <div class="panel-header">
+                            <h4 class="card-title"><i class="fa-solid fa-list-check text-accent"></i> Recent Transactions Ledger</h4>
+                            <button id="btn-dashboard-view-all-tx" class="btn btn-outline btn-xs">View Full Ledger</button>
+                        </div>
+                        <div class="list-wrapper">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Description</th>
+                                        <th>Category</th>
+                                        <th class="text-right">Amount</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="recent-transactions-tbody">
+                                    <!-- Rendered dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- AI Insights panel -->
+                    <div class="glass-panel details-panel">
+                        <div class="panel-header">
+                            <h4 class="card-title"><i class="fa-solid fa-wand-magic-sparkles text-accent"></i> Live AI Budget Insights</h4>
+                            <span class="badge badge-cyan">Dynamic</span>
+                        </div>
+                        <div id="ai-insights-list" class="insights-list">
+                            <!-- Rendered dynamically -->
+                        </div>
+                    </div>
+
+                    <!-- Sandbox panel shortcut -->
+                    <div class="glass-panel details-panel" style="display:flex; flex-direction:column; justify-content:space-between;">
+                        <div>
+                            <h4 class="card-title" style="margin-bottom:10px;"><i class="fa-solid fa-arrows-spin text-accent"></i> Quick Action Console</h4>
+                            <p class="text-muted text-sm">Add manual inputs to update statistics, goals, and test AI anomaly fraud filters.</p>
+                        </div>
+                        <div class="flex-column" style="gap:10px; margin-top:20px;">
+                            <button id="btn-trigger-add-tx" class="btn btn-accent btn-block">
+                                <i class="fa-solid fa-circle-plus"></i> Record Transaction
+                            </button>
+                            <button id="btn-trigger-add-money-goal" class="btn btn-outline btn-block text-cyan" style="border-color:var(--color-cyan);">
+                                <i class="fa-solid fa-money-bill-trend-up"></i> Allocate Goal Capital
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+            <!-- Ledger View -->
+            <main id="view-transactions" class="view-panel hidden">
+                <div class="glass-panel" style="padding: 20px; margin-bottom: 20px;">
+                    <div class="action-bar-transactions" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:15px;">
+                        <div class="filter-controls" style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+                            <div class="form-group-filter">
+                                <label for="filter-search">Search Text</label>
+                                <input type="text" id="filter-search" class="form-select" placeholder="Search text...">
+                            </div>
+                            <div class="form-group-filter">
+                                <label for="filter-category">Category</label>
+                                <select id="filter-category" class="form-select">
+                                    <option value="all">All Categories</option>
+                                    <option value="Salary">Salary</option>
+                                    <option value="Rent">Rent</option>
+                                    <option value="Groceries">Groceries</option>
+                                    <option value="Utilities">Utilities</option>
+                                    <option value="Dining Out">Dining Out</option>
+                                    <option value="Shopping">Shopping</option>
+                                    <option value="Electronics">Electronics</option>
+                                    <option value="Investment">Investment</option>
+                                    <option value="Money Transfer">Money Transfer</option>
+                                    <option value="Travel">Travel</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                            <div class="form-group-filter">
+                                <label for="filter-type">Type</label>
+                                <select id="filter-type" class="form-select">
+                                    <option value="all">All Types</option>
+                                    <option value="income">Inflow (Income)</option>
+                                    <option value="expense">Outflow (Expense)</option>
+                                </select>
+                            </div>
+                            <div class="form-group-filter">
+                                <label for="filter-start-date">Start Date</label>
+                                <input type="date" id="filter-start-date" class="form-select">
+                            </div>
+                            <div class="form-group-filter">
+                                <label for="filter-end-date">End Date</label>
+                                <input type="date" id="filter-end-date" class="form-select">
+                            </div>
+                        </div>
+
+                        <div style="display:flex; gap:10px;">
+                            <button id="btn-export-csv" class="btn btn-outline text-cyan" style="border-color:var(--color-cyan);">
+                                <i class="fa-solid fa-file-csv"></i> Export CSV
+                            </button>
+                            <button id="btn-transactions-add-tx" class="btn btn-accent">
+                                <i class="fa-solid fa-plus-circle"></i> Add Transaction
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="list-wrapper" style="max-height: 600px; overflow-y: auto;">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Merchant / Description</th>
+                                    <th>Location</th>
+                                    <th>Category</th>
+                                    <th>Type</th>
+                                    <th class="text-right">Amount</th>
+                                    <th>Threat</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="transactions-full-tbody">
+                                <!-- Rendered dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </main>
+
+            <!-- Fraud Center View -->
+            <main id="view-fraud" class="view-panel hidden">
+                <!-- Verified Badge & Intro -->
+                <div class="fraud-intro-card glass-panel" style="margin-bottom: 20px;">
+                    <div style="display:flex; gap:20px; align-items:center; flex-wrap:wrap;">
+                        <div class="security-indicator sec-verified animate-pulse-fast">
+                            <i class="fa-solid fa-shield-check" style="font-size:3rem; color:var(--color-green)"></i>
+                        </div>
+                        <div class="fraud-intro-info">
+                            <h3 class="font-accent">Cognitive Cyber Defense Engine</h3>
+                            <p class="text-muted text-sm">Automated Machine Learning transaction classifier. Analyzes expense velocity, amount variance, location travel velocity limits, transaction hour profiles, and device hardware hashes to block fraud.</p>
+                        </div>
+                        <div class="model-stats" style="margin-left:auto; display:flex; gap:15px;">
+                            <div class="mstat-item">
+                                <span class="mstat-lbl">Model Precision</span>
+                                <strong class="mstat-val text-cyan">99.4%</strong>
+                            </div>
+                            <div class="mstat-item">
+                                <span class="mstat-lbl">Response Latency</span>
+                                <strong class="mstat-val text-green">&lt; 12ms</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="fraud-cols-grid" style="display:grid; grid-template-columns: 1.3fr 1fr; gap:20px;">
+                    <!-- Left: Simulator Sandbox and Live Alerts -->
+                    <div class="flex-column" style="gap:20px;">
+                        <!-- Simulator Card -->
+                        <div class="glass-panel" style="padding: 20px;">
+                            <h4 class="card-title"><i class="fa-solid fa-bug-slash text-accent"></i> Threat Simulation Sandbox</h4>
+                            <p class="text-muted text-sm" style="margin-bottom:15px;">Inject pre-configured cyber threat vectors directly into the classification engine to test overlays, alerts, and live siren sound nodes.</p>
+                            
+                            <div class="simulation-sandbox" style="display:grid; grid-template-columns: 1fr; gap:10px;">
+                                <button id="btn-sim-velocity" class="btn btn-outline text-warning" style="justify-content:flex-start; border-color:var(--color-amber);">
+                                    <i class="fa-solid fa-bolt"></i> 1. Trigger Velocity Attack (3 rapid expenses in &lt; 1 min)
+                                </button>
+                                <button id="btn-sim-location" class="btn btn-outline text-cyan" style="justify-content:flex-start; border-color:var(--color-cyan);">
+                                    <i class="fa-solid fa-plane-departure"></i> 2. Trigger Travel Anomaly (Paris mismatch)
+                                </button>
+                                <button id="btn-sim-large" class="btn btn-outline text-danger" style="justify-content:flex-start; border-color:var(--color-red);">
+                                    <i class="fa-solid fa-triangle-exclamation"></i> 3. Trigger High-Risk Theft (₹95,000 Electronics purchase)
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Active Alerts -->
+                        <div class="glass-panel" style="padding: 20px; flex-grow:1;">
+                            <div class="panel-header-border">
+                                <h4 class="card-title" style="color:var(--color-red)"><i class="fa-solid fa-fire text-red animate-pulse-fast"></i> Flagged Suspicious Threats</h4>
+                                <span id="fraud-alerts-badge" class="badge badge-danger">0 Pending</span>
+                            </div>
+                            <div id="fraud-alerts-list" class="fraud-alerts-list">
+                                <!-- Dynamic rendering -->
+                                <div class="no-alerts-placeholder">
+                                    <i class="fa-solid fa-shield-halved text-green large-icon" style="opacity:0.3;"></i>
+                                    <p class="text-muted">Zero pending alerts. Your ledger is verified secure.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right: SOS card and Alert Log -->
+                    <div class="flex-column" style="gap:20px;">
+                        <!-- SOS Shield Card -->
+                        <div class="fraud-engine-panel glass-panel" style="border-color: rgba(239, 68, 68, 0.35); padding:20px;">
+                            <div class="panel-header-border">
+                                <h4 style="display:flex; align-items:center; gap:6px; color: var(--color-red);">
+                                    <i class="fa-solid fa-triangle-exclamation text-red animate-pulse-fast"></i> SOS Alert System
+                                </h4>
+                                <span id="sos-status-badge" class="badge badge-danger">SHIELD ON</span>
+                            </div>
+                            <p class="text-muted text-sm pb-10">When active, high-risk security threats trigger screen flash overlays, continuous siren audio, and hardware vibration warnings.</p>
+                            <div style="display:flex; flex-direction:column; gap:10px;">
+                                <button id="btn-sos-toggle" class="btn" style="width:100%; display:flex; align-items:center; justify-content:center; gap:8px; font-weight:700; transition:var(--transition-smooth); background: linear-gradient(135deg, var(--color-red), #b91c1c); color:white; box-shadow: 0 4px 15px rgba(239, 68, 68, 0.35);">
+                                    <i class="fa-solid fa-shield-virus"></i> <span>Disable SOS Shield</span>
+                                </button>
+                                <button id="btn-sos-test-alarm" class="btn btn-outline" style="width:100%; display:flex; align-items:center; justify-content:center; gap:8px; font-weight:700; border-color: var(--color-red); color: var(--color-red); background: rgba(239, 68, 68, 0.05); transition: var(--transition-smooth);">
+                                    <i class="fa-solid fa-volume-high animate-pulse-fast"></i> <span>Test SOS Alert Alarm</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Resolved Log -->
+                        <div class="glass-panel" style="padding: 20px; flex-grow:1;">
+                            <h4 class="card-title"><i class="fa-solid fa-clock-rotate-left text-accent"></i> Cyber Defense Resolution Logs</h4>
+                            <p class="text-muted text-sm" style="margin-bottom:15px;">History of resolved alerts, approved payments, and blocked sessions.</p>
+                            <div id="fraud-history-list" class="fraud-alerts-list">
+                                <!-- Dynamic rendering -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+            <!-- Settings & Goals View -->
+            <main id="view-settings" class="view-panel hidden">
+                <div class="settings-grid">
+                    <!-- Profile Card -->
+                    <div class="glass-panel" style="padding:20px;">
+                        <h4 class="card-title"><i class="fa-regular fa-user-gear text-accent"></i> Node Preferences</h4>
+                        <p class="text-muted text-sm" style="margin-bottom:15px;">Customize your primary user identification profile settings.</p>
+                        
+                        <form id="settings-profile-form" class="settings-form" style="margin-bottom:25px; padding-bottom:20px; border-bottom: 1px solid rgba(255,255,255,0.06);">
+                            <div class="form-group">
+                                <label for="settings-name">Full Name</label>
+                                <input type="text" id="settings-name" class="form-select" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="settings-email">Email Address (Primary Identity)</label>
+                                <input type="email" id="settings-email" class="form-select" readonly style="opacity:0.6; cursor:not-allowed;">
+                            </div>
+                            <button type="submit" id="btn-save-settings-profile" class="btn btn-accent" style="margin-top:10px;">Save Profile Changes</button>
+                        </form>
+
+                        <h4 class="card-title"><i class="fa-solid fa-scale-balanced text-accent"></i> Limits & Coordinate Parameters</h4>
+                        <p class="text-muted text-sm" style="margin-bottom:15px;">Configure monthly budget boundaries, targets, and home node location.</p>
+                        
+                        <form id="settings-budget-form" class="settings-form">
+                            <div class="form-group">
+                                <label for="settings-location">Home Location Node</label>
+                                <input type="text" id="settings-location" class="form-select" required>
+                            </div>
+                            <div class="form-row">
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label for="settings-budget">Monthly Limit</label>
+                                        <input type="number" id="settings-budget" class="form-select" min="100" required>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label for="settings-savings">Monthly Savings Goal</label>
+                                        <input type="number" id="settings-savings" class="form-select" min="0" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-row" style="margin-top: 10px;">
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label for="currency-select">Base Currency</label>
+                                        <select id="currency-select" class="form-select">
+                                            <option value="INR">₹ INR (Indian Rupee)</option>
+                                            <option value="USD">$ USD (US Dollar)</option>
+                                            <option value="EUR">€ EUR (Euro)</option>
+                                            <option value="GBP">£ GBP (British Pound)</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label for="theme-select">Interface Theme</label>
+                                        <select id="theme-select" class="form-select">
+                                            <option value="dark">Secure Dark Mode</option>
+                                            <option value="light">High Contrast Light</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="submit" id="btn-save-settings-budget" class="btn btn-accent" style="margin-top:15px;">Update Targets</button>
+                        </form>
+                    </div>
+
+                    <!-- Goals Management Card -->
+                    <div class="glass-panel" style="padding:20px;">
+                        <h4 class="card-title"><i class="fa-solid fa-bullseye text-accent"></i> Savings Targets & Milestone Goals</h4>
+                        <p class="text-muted text-sm" style="margin-bottom:15px;">Establish saving goals, deadlines, and automatically allocate ledger funds.</p>
+                        
+                        <!-- Goal Form -->
+                        <form id="settings-goal-form" class="settings-form" style="margin-bottom:25px; padding-bottom:20px; border-bottom: 1px solid rgba(255,255,255,0.06);">
+                            <div class="form-group">
+                                <label for="settings-goal-name">Savings Goal Name</label>
+                                <input type="text" id="settings-goal-name" class="form-select" placeholder="e.g. Upgrade Laptops" required>
+                            </div>
+                            <div class="form-row">
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label for="settings-goal-target">Target Amount (₹)</label>
+                                        <input type="number" id="settings-goal-target" class="form-select" placeholder="50000" min="100" required>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label for="settings-goal-deadline">Deadline Date</label>
+                                        <input type="date" id="settings-goal-deadline" class="form-select" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="submit" id="btn-save-settings-goal" class="btn btn-accent">Create Savings Goal</button>
+                        </form>
+
+                        <!-- Goal List -->
+                        <h5 class="font-accent" style="margin-bottom:10px; font-size:1rem;">Active Savings Targets</h5>
+                        <div id="savings-goals-list" class="flex-column" style="gap:15px;">
+                            <!-- Dynamically populated -->
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- ==================== FLOATING MODAL: ADD TRANSACTION ==================== -->
+    <div id="modal-add-tx" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="modal-add-tx-title">
+        <div class="modal-card glass-panel shadow-glow">
+            <div class="modal-header">
+                <h3 id="modal-add-tx-title"><i class="fa-solid fa-plus-circle text-accent"></i> Record Transaction</h3>
+                <button id="btn-modal-close" class="btn-close-modal" aria-label="Close modal">&times;</button>
+            </div>
+            <form id="modal-add-tx-form" class="modal-form" style="padding-top:15px;">
+                <div class="form-group">
+                    <label for="modal-tx-amount">Transaction Amount (₹)</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-indian-rupee-sign" id="add-tx-currency-icon"></i>
+                        <input type="number" id="modal-tx-amount" step="0.01" min="0.01" placeholder="0.00" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="col-6">
+                        <div class="form-group">
+                            <label for="modal-tx-category">Category</label>
+                            <select id="modal-tx-category" class="form-select" required>
+                                <option value="Salary">Salary</option>
+                                <option value="Rent">Rent</option>
+                                <option value="Groceries">Groceries</option>
+                                <option value="Utilities">Utilities</option>
+                                <option value="Dining Out">Dining Out</option>
+                                <option value="Shopping">Shopping</option>
+                                <option value="Electronics">Electronics</option>
+                                <option value="Investment">Investment</option>
+                                <option value="Money Transfer">Money Transfer</option>
+                                <option value="Travel">Travel</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="form-group">
+                            <label for="modal-tx-type">Transaction Flow</label>
+                            <select id="modal-tx-type" class="form-select" required>
+                                <option value="expense">Outflow (Expense)</option>
+                                <option value="income">Inflow (Income)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="modal-tx-location">Merchant Location</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-location-dot"></i>
+                        <input type="text" id="modal-tx-location" placeholder="e.g. Mumbai, India">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="modal-tx-date">Transaction Timestamp</label>
+                    <div class="input-wrapper">
+                        <i class="fa-regular fa-clock"></i>
+                        <input type="datetime-local" id="modal-tx-date">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="modal-tx-desc">Description / Reference ID</label>
+                    <div class="input-wrapper">
+                        <i class="fa-regular fa-file-lines"></i>
+                        <input type="text" id="modal-tx-desc" placeholder="e.g. Swiggy Food Delivery">
+                    </div>
+                </div>
+                <div class="modal-actions" style="margin-top:20px; display:flex; gap:10px; justify-content:flex-end;">
+                    <button type="button" id="btn-modal-cancel" class="btn btn-outline">Cancel</button>
+                    <button type="submit" id="btn-modal-submit" class="btn btn-accent">Record Transaction</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ==================== FLOATING MODAL: ADD MONEY TO GOAL ==================== -->
+    <div id="modal-add-money-goal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="modal-add-money-title">
+        <div class="modal-card glass-panel shadow-glow">
+            <div class="modal-header">
+                <h3 id="modal-add-money-title"><i class="fa-solid fa-money-bill-transfer text-accent"></i> Allocate Capital</h3>
+                <button id="btn-add-money-modal-close" class="btn-close-modal" aria-label="Close modal">&times;</button>
+            </div>
+            <form id="modal-add-money-form" class="modal-form" style="padding-top:15px;">
+                <div class="form-group">
+                    <label for="modal-add-money-select">Select Savings Target Goal</label>
+                    <select id="modal-add-money-select" class="form-select" required>
+                        <!-- Populated dynamically -->
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="modal-add-money-amount">Allocation Amount (₹)</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-indian-rupee-sign" id="add-money-currency-icon"></i>
+                        <input type="number" id="modal-add-money-amount" step="0.01" min="0.01" placeholder="0.00" required>
+                    </div>
+                </div>
+                <div class="modal-actions" style="margin-top:20px; display:flex; gap:10px; justify-content:flex-end;">
+                    <button type="button" id="btn-add-money-modal-cancel" class="btn btn-outline">Cancel</button>
+                    <button type="submit" id="btn-add-money-modal-submit" class="btn btn-accent">Allocate Capital</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ==================== FLOATING MODAL: HIGH-DRAMA FRAUD POPUP ==================== -->
+    <div id="modal-fraud-alert" class="modal-overlay hidden" role="dialog" aria-modal="true" style="z-index: 10000;">
+        <div class="modal-card glass-panel shadow-glow" style="border: 2px solid var(--color-red); max-width: 480px;">
+            <div class="modal-header" style="border-bottom: 1px solid rgba(239, 68, 68, 0.2); padding-bottom:12px;">
+                <h3 style="color:var(--color-red); display:flex; align-items:center; gap:8px;">
+                    <i class="fa-solid fa-shield-virus animate-pulse-fast"></i> AI Risk Containment Alert
+                </h3>
+                <button id="btn-fraud-modal-close" class="btn-close-modal" aria-label="Close modal" style="color:var(--color-red);">&times;</button>
+            </div>
+            
+            <div style="padding:20px 0; text-align:center;">
+                <div style="background: rgba(239, 68, 68, 0.1); border-radius:50%; width:70px; height:70px; display:flex; align-items:center; justify-content:center; margin:0 auto 15px;">
+                    <span id="fraud-popup-risk" class="text-red font-accent" style="font-size:1.5rem; font-weight:800;">95%</span>
+                </div>
+                <h4 class="font-accent" style="font-size:1.2rem; margin-bottom:5px;">Suspicious Outflow Intercepted</h4>
+                <p class="text-muted text-sm" style="line-height:1.4; padding:0 10px;">The Cognitive AI Classifier has flagged this transaction structure. Actions required to authorize or terminate transaction.</p>
+            </div>
+
+            <div class="glass-panel" style="padding:15px; background:rgba(255,255,255,0.02); border-radius:8px; margin-bottom:20px; font-size:0.9rem;">
+                <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                    <span class="text-muted">Transaction:</span>
+                    <strong id="fraud-popup-desc" style="color:var(--color-slate-100)">Swiggy Food Delivery</strong>
+                </div>
+                <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                    <span class="text-muted">Amount:</span>
+                    <strong id="fraud-popup-amount" style="color:var(--color-red)">₹0.00</strong>
+                </div>
+                <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                    <span class="text-muted">Network Node IP:</span>
+                    <span id="fraud-popup-ip" style="font-family:monospace; color:var(--color-slate-200);">0.0.0.0</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                    <span class="text-muted">Device Fingerprint:</span>
+                    <span id="fraud-popup-device" style="color:var(--color-slate-200); font-size:0.8rem;">Unknown</span>
+                </div>
+                <div style="margin-top:10px; padding-top:10px; border-top:1px solid rgba(255,255,255,0.05); text-align:left;">
+                    <span class="text-muted text-xs">Risk Matrix Assessment:</span>
+                    <p id="fraud-popup-details" class="text-warning text-xs" style="margin-top:4px; line-height:1.4;">Travel Velocity Limit breached. Multi-factor location mismatch.</p>
+                </div>
+            </div>
+
+            <!-- Mock SMS Phone Alert inside Modal -->
+            <div class="sms-toast sms-danger" style="margin-bottom: 20px;">
+                <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
+                    <i class="fa-solid fa-comment-sms text-red animate-pulse-fast" style="font-size:1.2rem;"></i>
+                    <strong style="color:var(--color-slate-100)">BankAlert SIM Network</strong>
+                </div>
+                <p style="font-size:0.85rem; margin:0; line-height:1.4; color:var(--color-slate-300); text-align:left;">
+                    High risk transaction of <span id="sms-fraud-amount" style="font-weight:bold;">₹0.00</span> detected from <span id="sms-fraud-loc" style="font-weight:bold;">Unknown</span>. If this was not you, block immediately.
+                </p>
+            </div>
+
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+                <button id="btn-fraud-popup-block" class="btn" style="background:var(--color-red); color:white; font-weight:700; transition:var(--transition-smooth);">
+                    <i class="fa-solid fa-ban"></i> Terminate Outflow
+                </button>
+                <button id="btn-fraud-popup-approve" class="btn btn-outline" style="border-color:var(--color-green); color:var(--color-green); font-weight:700;">
+                    <i class="fa-solid fa-circle-check"></i> Authorize Payment
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lucide Icons Loader -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        lucide.createIcons();
+    </script>
+    <!-- Frontend JS controller -->
+    <script src="/static/js/app.js"></script>
+</body>
+</html>
+"""
+
+# Write vanilla HTML content to index.html
+with open(vanilla_index_path, 'w', encoding='utf-8') as f:
+    f.write(vanilla_html_content)
+
+print(f"Successfully updated vanilla index.html at {vanilla_index_path}")
